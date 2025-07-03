@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
 const shortUrlSchema = new mongoose.Schema({
-  full_url: {
+  fullUrl: {
     type: String,
     required: true,
   },
 
-  short_url: {
+  shortUrl: {
     type: String,
     index: true,
     required: true,
@@ -17,7 +17,7 @@ const shortUrlSchema = new mongoose.Schema({
     required: true,
     default: 0,
   },
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "user",
   },
