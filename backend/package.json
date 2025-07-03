@@ -1,9 +1,11 @@
 {
   "name": "url-shortner-backend",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.0.1",
     "express": "^5.1.0",
     "mongoose": "^8.16.1",
+    "morgan": "^1.10.0",
     "nanoid": "^5.1.5"
   },
   "type": "module",
