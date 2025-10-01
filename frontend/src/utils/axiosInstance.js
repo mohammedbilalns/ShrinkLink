@@ -1,44 +1,103 @@
 import axios from "axios";
+import store from "../store";
+import { logout } from "../store/slices/authSlice";
 
 const axiosInstance = axios.create({
-	baseURL:"http://localhost:5000"
-	,timeout:10000,
-	withCredentials: true
-})
+  baseURL: "http://localhost:5000",
+  timeout: 10000,
+  withCredentials: true,
+});
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 
 axiosInstance.interceptors.response.use(
-	(response) =>{
-		return response
-	},
-	(error) => {
-		if(error.response){
-			const {status, data} = error.response
-			switch(status){
-				case 400:
-					console.error("Bad request", data)
-					break ;
-				case 401: 
-					console.error("Unauthorized", data)
-					break 
-				case 403:
-					console.error("Forbidden", data)
-					break
-				case 404: 
-					console.error("Not found", data)
-					break
-				case 500:
-					console.error("Server error", data)
-					break 
-				default:
-					console.error(`Error ${status}`, data)
-			}
-		}else if(error.request){
-			console.error("Network Error: No response recieved",error.request)
-		}else {
-			console.error("Error", error.message)
-		}
-		throw error 
-	}
-)
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-export default axiosInstance
+    if (error.response?.status === 401) {
+      const requestPath = originalRequest.url;
+      
+      if (requestPath === "/auth/refresh" || requestPath?.includes("/auth/refresh")) {
+        isRefreshing = false;
+        processQueue(error);
+        store.dispatch(logout());
+        if (!window.location.pathname.includes("/auth")) {
+          window.location.href = "/auth";
+        }
+        return Promise.reject(error);
+      }
+
+      if (originalRequest._retry) {
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then(() => axiosInstance(originalRequest))
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        await axiosInstance.post("/auth/refresh");
+        processQueue(null);
+        return axiosInstance(originalRequest);
+      } catch (err) {
+        processQueue(err);
+        store.dispatch(logout());
+        if (!window.location.pathname.includes("/auth")) {
+          window.location.href = "/auth";
+        }
+        return Promise.reject(err);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    if (error.response) {
+      const { status, data } = error.response;
+      switch (status) {
+        case 400:
+          console.error("Bad request", data);
+          break;
+        case 403:
+          console.error("Forbidden", data);
+          break;
+        case 404:
+          console.error("Not found", data);
+          break;
+        case 500:
+          console.error("Server error", data);
+          break;
+        default:
+          console.error(`Error ${status}`, data);
+      }
+    } else if (error.request) {
+      console.error("Network Error: No response received", error.request);
+    } else {
+      console.error("Error", error.message);
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default axiosInstance;

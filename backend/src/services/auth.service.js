@@ -29,9 +29,7 @@ export const loginUser = async (email, password) =>{
 }
 
 export const refreshTokens  = async (token) =>{
-	console.log("token in service  ", token)
 	const decoded =  verifyToken(token)
-	console.log("decoded token in service ", decoded)
 	const user = await findUserById(decoded.id)
 	if(!user) throw new NotFoundError("User not found")
 	const {accessToken, refreshToken} = generateTokens(user)
