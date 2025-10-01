@@ -56,12 +56,12 @@ function UrlsList() {
                 <tr key={url._id} className="border-t">
                   <td className="px-4 py-2 flex items-center gap-2">
                     <a
-                      href={url.shortUrl}
+                      href={baseUrl + url.shortUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 underline"
                     >
-                      {url.shortUrl}
+                      {baseUrl +  url.shortUrl}
                     </a>
                     <button
                       onClick={() => handleCopy(url.shortUrl)}

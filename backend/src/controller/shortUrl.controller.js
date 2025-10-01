@@ -3,7 +3,6 @@ import { createCustomShortUrlWithUser, createShortUrWithoutUser, createShortUrWi
 import { wrapAsync } from "../utils/tryCatchWrapper.js";
 
 export const createShortUrl = wrapAsync(async (req, res) => {
-	console.log(req.body)
 	const { url } = req.body;
 	if(!url) throw new Error("Inavlid data")
 	let shortUrl  
@@ -30,5 +29,5 @@ export const createCustomShortUrl = wrapAsync(async (req,res)=>{
 	const user = req.user 
 	console.log("data in the controller", req.body)
 	const shortUrl = await createCustomShortUrlWithUser(url, user.id,slug)
-	res.status(200).json({shortUrl:process.env.APP_URL + shortUrl})
+	res.status(200).send(process.env.APP_URL + shortUrl)
 })

@@ -8,7 +8,7 @@ import { Provider } from "react-redux";
 import store from "./store";
 
 
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 const router = createRouter({routeTree , context: {queryClient, store}})
 
 createRoot(document.getElementById("root")).render(

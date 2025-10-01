@@ -3,6 +3,7 @@ import { useState } from "react";
 import { createShortUrl } from "../api/shortUrl.api";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import { queryClient } from "../main";
 
 function UrlForm() {
   const [url, setUrl] = useState("");
@@ -19,6 +20,7 @@ function UrlForm() {
     }
     try {
       const data = await createShortUrl(url, isAuthenticated ? slug : undefined);
+			queryClient.invalidateQueries("userUrls")
       setShortUrl(data);
       try {
         await navigator.clipboard.writeText(data);
