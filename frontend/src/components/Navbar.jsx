@@ -1,7 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import { useSelector } from "react-redux";
 
 function Navbar() {
-  const user = { username: "dummyuser" }; // Dummy user object
+ 
+	const auth = useSelector(state => state.auth)
+	const {user, isAuthenticated} = auth
 
   return (
     <nav className="bg-white/80 backdrop-blur-md shadow-md p-4 sticky top-0 z-50">
@@ -10,9 +13,9 @@ function Navbar() {
           LinkShrink
         </Link>
         <div className="flex items-center">
-          {user ? (
+          {isAuthenticated ? (
             <>
-              <span className="text-gray-800 mr-4">{user.username}</span>
+              <span className="text-gray-800 mr-4">{user.name}</span>
               <button
                 onClick={() => {}}
                 className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out"

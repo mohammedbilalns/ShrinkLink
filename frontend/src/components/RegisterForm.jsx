@@ -1,41 +1,43 @@
 import * as Label from "@radix-ui/react-label";
-import * as Toast from "@radix-ui/react-toast";
 import { useState } from "react";
 import { registerUser } from "../api/user.api";
+import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "@tanstack/react-router";
+import { login } from "../store/slices/authSlice";
 
 function RegisterForm({ toggleForm }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
-  const [open, setOpen] = useState(false);
-  const [error, setError] = useState("");
+	const dispatch = useDispatch()
+	const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !password.trim()) {
-      setError("All fields are required");
-      setOpen(true);
-      return;
-    }
-
-		if(password.trim() !== confirmPassword.trim()){
-			setError("Passwords do not match");
-			setOpen(true);
+      toast.error 
 			return;
 		}
-    setError("");
-    try {
-      await registerUser( name, email, password );
-      setOpen(true);
-    } catch (err) {
-      setError(err?.response?.data?.message || "Failed to register.");
-      setOpen(true);
-    }
-  };
 
-  return (
-    <Toast.Provider swipeDirection="right">
+		if(password.trim() !== confirmPassword.trim()){
+			toast.error("Passwords do not match");
+			return;
+		}
+
+		try {
+			const data = await registerUser( name, email, password );	
+			dispatch(login(data.user))
+			toast.success(data.message || "Register successful!");
+			navigate({to:"/dashboard"})
+		} catch (err) {
+			console.log(err);
+			toast.error(err?.response?.data?.message || "Failed to register.");
+		}
+	};
+
+	return (
       <div className="bg-white shadow-lg rounded-2xl px-6 py-6 w-full max-w-md">
         <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -110,27 +112,7 @@ function RegisterForm({ toggleForm }) {
           </button>
         </p>
       </div>
-      <Toast.Root
-        open={open}
-        onOpenChange={setOpen}
-        className="bg-white border border-gray-300 rounded-lg px-4 py-3 shadow-lg"
-      >
-        <Toast.Title className="font-semibold text-gray-800">
-          {error ? "Error" : "Success!"}
-        </Toast.Title>
-        <Toast.Description
-          className={`text-sm ${error ? "text-red-600" : "text-gray-600"}`}
-        >
-          {error ? (
-            <span>{error}</span>
-          ) : (
-            <span>Registration successful! Please login.</span>
-          )}
-        </Toast.Description>
-      </Toast.Root>
-      <Toast.Viewport className="fixed bottom-5 right-5 z-50 w-[300px] max-w-full outline-none" />
-    </Toast.Provider>
-  );
+        );
 }
 
 export default RegisterForm;
