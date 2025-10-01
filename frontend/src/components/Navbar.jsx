@@ -16,17 +16,14 @@ function Navbar() {
 	const logoutMutation = useMutation({
 		mutationFn: logoutUser,	
 		onSuccess: () => {
-			toast.success("logged out successfully")
-
-			navigate({to:"/auth"})
+			toast.success("You have been logged out successfully")
 			dispatch(logout())
-
 			queryClient.clear();
-
 		}
 	})
 	const handleLogout = async () => {
 		await logoutMutation.mutateAsync()	
+		navigate({to:"/auth"})
 	}
 	
   return (
