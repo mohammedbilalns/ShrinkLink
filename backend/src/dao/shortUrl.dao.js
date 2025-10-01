@@ -40,3 +40,7 @@ export const getAllUrlsByUser = async(userId, skip, limit) =>{
 	const [urls, totalCount ] = await Promise.all([urlSchema.find({userId}).skip(skip).limit(limit).sort({createdAt: -1}).lean(),urlSchema.countDocuments({userId})])
 	return {urls, totalCount}
 }
+
+export const getExistingUrl= async(userId, url) => {
+ return await urlSchema.findOne({userId, fullUrl: url})	
+}

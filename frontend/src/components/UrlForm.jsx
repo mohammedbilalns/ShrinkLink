@@ -11,6 +11,7 @@ function UrlForm() {
   const [url, setUrl] = useState("");
   const [slug, setSlug] = useState("");
   const [shortUrl, setShortUrl] = useState("");
+  const [hasGeneratedLink, setHasGeneratedLink] = useState(false);
 
   const auth = useSelector((state) => state.auth);
   const { isAuthenticated } = auth;
@@ -20,6 +21,7 @@ function UrlForm() {
       createShortUrl(url, isAuthenticated ? slug : undefined),
     onSuccess: (data) => {
       setShortUrl(data);
+      setHasGeneratedLink(true);
       queryClient.invalidateQueries("userUrls");
 
       navigator.clipboard
@@ -36,6 +38,14 @@ function UrlForm() {
     },
   });
 
+  const handleUrlChange = (event) => {
+    setUrl(event.target.value);
+    if (shortUrl) {
+      setShortUrl("");
+      setHasGeneratedLink(false);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -44,7 +54,7 @@ function UrlForm() {
       return;
     }
 
-    //  URL validation
+    // URL validation
     try {
       new URL(url);
     } catch {
@@ -53,6 +63,11 @@ function UrlForm() {
     }
 
     createUrlMutation.mutate({ url, slug });
+  };
+
+  const handleReset = () => {
+    setShortUrl("");
+    setHasGeneratedLink(false);
   };
 
   return (
@@ -67,7 +82,7 @@ function UrlForm() {
           placeholder="https://example.com/very-long-url-that-needs-shortening"
           required
           className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none w-full"
-          onChange={(event) => setUrl(event.target.value)}
+          onChange={handleUrlChange}
           value={url}
           disabled={createUrlMutation.isLoading}
         />
@@ -92,18 +107,33 @@ function UrlForm() {
           </>
         )}
         {shortUrl && (
-          <div className=" flex justify-center align-center">
+          <div className="flex justify-center align-center">
             <QRCodeGenerator value={shortUrl} />
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={createUrlMutation.isLoading}
-          className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition w-full sm:w-auto cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {createUrlMutation.isLoading ? "Creating..." : "Shorten URL"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            disabled={createUrlMutation.isLoading || hasGeneratedLink}
+            className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition flex-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {createUrlMutation.isLoading
+              ? "Creating..."
+              : hasGeneratedLink
+                ? "Shorten URL"
+                : "Shorten URL"}
+          </button>
+          {hasGeneratedLink && (
+            <button
+              type="button"
+              onClick={handleReset}
+              className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition cursor-pointer"
+            >
+              Reset
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="mt-4 text-center min-h-[32px] flex items-center justify-center">
