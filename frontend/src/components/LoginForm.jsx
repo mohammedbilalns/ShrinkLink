@@ -2,12 +2,15 @@ import * as Label from "@radix-ui/react-label";
 import * as Toast from "@radix-ui/react-toast";
 import { useState } from "react";
 import { loginUser } from "../api/user.api";
+import { useSelector } from "react-redux";
 
 function LoginForm({ toggleForm }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
+	const auth = useSelector((state) => state.auth)
+	console.log(auth)
 
   const handleSubmit = async (e) => {
     e.preventDefault();

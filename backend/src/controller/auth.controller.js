@@ -1,12 +1,11 @@
 import { cookieOptions } from "../config/cookie.config.js";
 import { loginUser, registerUser } from "../services/auth.service.js";
-import { AppError } from "../utils/errorHandler.js";
 import { wrapAsync } from "../utils/tryCatchWrapper.js";
 
 export const register = wrapAsync(async (req,res)=>{
 	const {name, email , password} = req.body 
 	if(!name.trim() || !email.trim() || !password.trim()){
-		throw new AppError("Invalid data ")	
+		throw new Error("Invalid data ")	
 	}
 	const {user, token} = await registerUser(name, email,password)
 	req.user = user 
@@ -18,7 +17,7 @@ export const register = wrapAsync(async (req,res)=>{
 export const login = wrapAsync(async (req,res)=>{
 	const {email,password} = req.body
 	if( !email.trim() || !password.trim()){
-		throw new AppError("Invalid data ")	
+		throw new Error("Invalid data ")	
 	}
 	const {user,token} = await loginUser(email,password)
 	req.user = user 
