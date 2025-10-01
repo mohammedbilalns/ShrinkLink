@@ -91,6 +91,11 @@ function UrlForm() {
             />
           </>
         )}
+        {shortUrl && (
+          <div className=" flex justify-center align-center">
+            <QRCodeGenerator value={shortUrl} />
+          </div>
+        )}
 
         <button
           type="submit"
