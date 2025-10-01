@@ -4,41 +4,61 @@ import { createShortUrl } from "../api/shortUrl.api";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import { queryClient } from "../main";
+import QRCodeGenerator from "./QrCode";
+import { useMutation } from "@tanstack/react-query";
 
 function UrlForm() {
   const [url, setUrl] = useState("");
-  const [slug, setSlug] = useState(""); 
+  const [slug, setSlug] = useState("");
   const [shortUrl, setShortUrl] = useState("");
 
   const auth = useSelector((state) => state.auth);
   const { isAuthenticated } = auth;
 
-  const handleSubmit = async () => {
+  const createUrlMutation = useMutation({
+    mutationFn: ({ url, slug }) =>
+      createShortUrl(url, isAuthenticated ? slug : undefined),
+    onSuccess: (data) => {
+      setShortUrl(data);
+      queryClient.invalidateQueries("userUrls");
+
+      navigator.clipboard
+        .writeText(data)
+        .then(() => {
+          toast.success(`URL: ${data} copied to clipboard.`);
+        })
+        .catch(() => {
+          toast.error("Failed to copy to clipboard.");
+        });
+    },
+    onError: (error) => {
+      toast.error(error?.response?.data?.message || "Failed to shorten URL.");
+    },
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
     if (!url.trim()) {
-    	toast("Url is required");
+      toast.error("URL is required");
       return;
     }
+
+    //  URL validation
     try {
-      const data = await createShortUrl(url, isAuthenticated ? slug : undefined);
-			queryClient.invalidateQueries("userUrls")
-      setShortUrl(data);
-      try {
-        await navigator.clipboard.writeText(data);
-      } catch {
-				toast("Failed to copy to clipboard.");
-      }
-			toast("URL: " + data + " copied to clipboard.");
-     
-    } catch (err) {
-     console.error(err);
-			toast(err?.response?.data?.message || "Failed to shorten URL.");
+      new URL(url);
+    } catch {
+      toast.error("Please enter a valid URL");
+      return;
     }
+
+    createUrlMutation.mutate({ url, slug });
   };
 
   return (
-    <>
-      <div className="bg-white shadow-lg rounded-2xl px-6 py-6 w-full max-w-2xl flex flex-col gap-4">
-        <Label.Root htmlFor="url" className="sr-only">
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl">
+      <div className="bg-white shadow-lg rounded-2xl px-6 py-6 w-full flex flex-col gap-4">
+        <Label.Root htmlFor="url" className="text-sm font-medium text-gray-700">
           Enter your long URL
         </Label.Root>
         <input
@@ -47,36 +67,39 @@ function UrlForm() {
           placeholder="https://example.com/very-long-url-that-needs-shortening"
           required
           className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none w-full"
-          onInput={(event) => setUrl(event.target.value)}
+          onChange={(event) => setUrl(event.target.value)}
           value={url}
+          disabled={createUrlMutation.isLoading}
         />
 
-        {/* 🔹 Show slug input only if authenticated */}
         {isAuthenticated && (
           <>
-            <Label.Root htmlFor="slug" className="sr-only">
-              Custom Slug
+            <Label.Root
+              htmlFor="slug"
+              className="text-sm font-medium text-gray-700"
+            >
+              Custom Slug (optional)
             </Label.Root>
             <input
               id="slug"
               type="text"
               placeholder="your-custom-slug"
               className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none w-full"
-              onInput={(event) => setSlug(event.target.value)}
+              onChange={(event) => setSlug(event.target.value)}
               value={slug}
-						/>
-					</>
-				)}
+              disabled={createUrlMutation.isLoading}
+            />
+          </>
+        )}
 
-				<button
-					onClick={handleSubmit}
-					type="submit"
-					className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition w-full sm:w-auto cursor-pointer"
-				>
-					Shorten URL
-				</button>
-
-			</div>
+        <button
+          type="submit"
+          disabled={createUrlMutation.isLoading}
+          className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition w-full sm:w-auto cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {createUrlMutation.isLoading ? "Creating..." : "Shorten URL"}
+        </button>
+      </div>
 
       <div className="mt-4 text-center min-h-[32px] flex items-center justify-center">
         {shortUrl && (
@@ -86,17 +109,15 @@ function UrlForm() {
               href={shortUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 underline break-all"
+              className="text-blue-600 underline break-all ml-1"
             >
               {shortUrl}
             </a>
           </>
         )}
       </div>
-    
-    </>
+    </form>
   );
 }
 
 export default UrlForm;
-
