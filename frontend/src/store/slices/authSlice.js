@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice, isRejectedWithValue } from "@reduxjs/toolkit";
-import { loginUser } from "../../api/user.api";
+import {  createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
 	user: null , 
@@ -19,7 +18,6 @@ const authSlice = createSlice({
 		}
 	}
 })
-
 
 export const {login, logout}  = authSlice.actions; 
 export default authSlice.reducer

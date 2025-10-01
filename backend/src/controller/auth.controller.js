@@ -30,6 +30,11 @@ export const getMe = wrapAsync(async (req,res)=>{
 })
 
 
+export const logout = wrapAsync(async (req,res)=>{
+	res.clearCookie("accessToken")
+	res.status(200).json({message:"Logged out successfully"}) 
+})
+
 export const refresh = wrapAsync(async (req,res)=>{
 
 })
