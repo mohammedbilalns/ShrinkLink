@@ -19,3 +19,8 @@ export const getCurrentUser = async()=> {
 	const {data} = await axiosInstance.get('/auth/me')
 	return data 
 }
+
+export const getAllUserUrls = async( page = 1, limit = 10) => {
+	const {data} = await axiosInstance.get(`/api/user/urls?page=${page}&limit=${limit}`)
+	return data
+}

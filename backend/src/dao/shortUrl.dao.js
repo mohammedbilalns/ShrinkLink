@@ -37,5 +37,6 @@ export const getCustomShortUrl = async(slug)=>{
 }
 
 export const getAllUrlsByUser = async(userId, skip, limit) =>{
-	return await urlSchema.find({userId}).skip(skip).limit(limit)
+	const [urls, totalCount ] = await Promise.all([urlSchema.find({userId}).skip(skip).limit(limit).sort({createdAt: -1}).lean(),urlSchema.countDocuments({userId})])
+	return {urls, totalCount}
 }

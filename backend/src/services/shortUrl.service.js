@@ -1,5 +1,5 @@
 import { generateNanoId } from "../utils/helper.js";
-import { getCustomShortUrl, saveShortUrl } from "../dao/shortUrl.dao.js";
+import { getAllUrlsByUser, getCustomShortUrl, saveShortUrl } from "../dao/shortUrl.dao.js";
 
 export const createShortUrWithoutUser = async (url) => {
   const shortUrl = generateNanoId(7);
@@ -23,5 +23,7 @@ export const createCustomShortUrlWithUser = async (url,userId, slug) =>{
 
 export const getUserShortUrls = async (userId, page, limit) => {
 	const skip = (page-1) * limit
-	return await getallUrlsByUser(userId, skip, limit)
+	const {urls, totalCount}=  await getAllUrlsByUser(userId, skip, limit)
+	const totalPages = Math.ceil(totalCount/limit)
+	return {urls, totalPages}
 }

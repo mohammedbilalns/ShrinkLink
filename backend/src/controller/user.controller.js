@@ -4,6 +4,8 @@ import { wrapAsync } from "../utils/tryCatchWrapper.js";
 export const getAllUserUrls = wrapAsync(async (req,res)=>{
 	const {_id}  = req.user 
 	const {page , limit} = req.query
-	const urls = await getUserShortUrls(_id, page, limit)
-	res.status(200).json({success: true, messag: "Urls fetched successfully", urls})
+	const {urls, totalPages}= await getUserShortUrls(_id, page, limit)
+	console.log("urls in controller 	", urls)
+	console.log("totalPages in controller 	", totalPages)
+	res.status(200).json({success: true, message: "Urls fetched successfully", urls, totalPages})
 })
