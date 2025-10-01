@@ -1,6 +1,7 @@
 import urlSchema from "../models/shortUrl.model.js";
 
 export const saveShortUrl = async (shortUrl, fullUrl, userId) => {
+	console.log("data in dao", shortUrl, fullUrl, userId)
   try {
     const newUrl = new urlSchema({
       shortUrl,
@@ -30,3 +31,7 @@ export const getUrlFromShortUrl = async (shortUrl) => {
     throw new Error(err.message);
   }
 };
+
+export const getCustomShortUrl = async(slug)=>{
+	return  await urlSchema.findOne({shortUrl: slug})
+}

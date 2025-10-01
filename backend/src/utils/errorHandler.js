@@ -38,7 +38,6 @@ export class BadReqeustError extends AppError {
     constructor(message = "Bad Request"){
         super(message,400)
     }
-
 }
 
 export class UnAuthorizedError extends AppError {

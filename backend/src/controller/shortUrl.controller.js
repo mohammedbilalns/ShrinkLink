@@ -1,12 +1,18 @@
-import { getUrlFromShortUrl } from "../dao/shortUrl.js";
-import { createShortUrWithoutUser } from "../services/shortUrl.service.js";
+import { getUrlFromShortUrl } from "../dao/shortUrl.dao.js";
+import { createCustomShortUrlWithUser, createShortUrWithoutUser, createShortUrWithUser } from "../services/shortUrl.service.js";
 import { wrapAsync } from "../utils/tryCatchWrapper.js";
 
 export const createShortUrl = wrapAsync(async (req, res) => {
-  const { url } = req.body;
-  console.log("Url from body", url)
-  const shortUrl = await createShortUrWithoutUser(url);
-  res.send(process.env.APP_URL + shortUrl);
+	console.log(req.body)
+	const { url } = req.body;
+	if(!url) throw new Error("Inavlid data")
+	let shortUrl  
+	if(req.user){
+		shortUrl = await createShortUrWithUser(url, req.user._id)	
+	}else {
+		shortUrl = await createShortUrWithoutUser(url);
+	}
+	res.send(process.env.APP_URL + shortUrl);
 });
 
 export const redirectUrl = wrapAsync(async (req, res) => {
@@ -15,3 +21,14 @@ export const redirectUrl = wrapAsync(async (req, res) => {
   if (!url) throw new Error("Short url is not found");
   res.redirect(url);
 });
+
+
+export const createCustomShortUrl = wrapAsync(async (req,res)=>{
+	const {url, slug} =req.body 
+	
+	if(!url || !slug) throw new Error("Inalid data")
+	const user = req.user 
+	console.log("data in the controller", req.body)
+	const shortUrl = await createCustomShortUrlWithUser(url, user.id,slug)
+	res.status(200).json({shortUrl:process.env.APP_URL + shortUrl})
+})
