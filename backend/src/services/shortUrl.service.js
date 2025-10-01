@@ -8,7 +8,7 @@ export const createShortUrWithoutUser = async (url) => {
   return shortUrl;
 };
 
-export const createShortUrWithoUser = async (url, userId) => {
+export const createShortUrWithUser = async (url, userId) => {
   const shortUrl = generateNanoId(7);
   await saveShortUrl(shortUrl, url, userId);
   return shortUrl;
