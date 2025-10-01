@@ -35,3 +35,7 @@ export const getUrlFromShortUrl = async (shortUrl) => {
 export const getCustomShortUrl = async(slug)=>{
 	return  await urlSchema.findOne({shortUrl: slug})
 }
+
+export const getAllUrlsByUser = async(userId, skip, limit) =>{
+	return await urlSchema.find({userId}).skip(skip).limit(limit)
+}

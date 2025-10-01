@@ -20,3 +20,8 @@ export const createCustomShortUrlWithUser = async (url,userId, slug) =>{
 	await saveShortUrl(slug, url, userId)
 	return slug 
 }
+
+export const getUserShortUrls = async (userId, page, limit) => {
+	const skip = (page-1) * limit
+	return await getallUrlsByUser(userId, skip, limit)
+}

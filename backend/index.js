@@ -3,6 +3,7 @@ import { configDotenv } from "dotenv";
 import connectDb from "./src/config/mongodb.config.js";
 import shortUrlRouter from "./src/routes/shortUrl.route.js";
 import redirectRouter from "./src/routes/redirectRoute.js"
+import userRouter from "./src/routes/user.routes.js"
 import authRouter from "./src/routes/auth.route.js"
 import { errorHandler } from "./src/utils/errorHandler.js";
 import morgan from "morgan";
@@ -25,6 +26,7 @@ app.use(cookieParser())
 app.use("/auth", authRouter)
 app.use(attachUser)
 app.use("/api/url", shortUrlRouter);
+app.use("/api/user", userRouter)
 app.use("/", redirectRouter )
 
 app.use(errorHandler)
