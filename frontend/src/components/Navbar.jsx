@@ -8,22 +8,23 @@ import { queryClient } from "../main";
 import { toast } from "sonner";
 
 function Navbar() {
-  const auth = useSelector(state => state.auth);
+  const auth = useSelector((state) => state.auth);
   const { user, isAuthenticated } = auth;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const logoutMutation = useMutation({
     mutationFn: logoutUser,
     onSuccess: () => {
-      dispatch(logout());
+      queryClient.removeQueries(["currentUser"]);
       queryClient.clear();
+      dispatch(logout());
       navigate({ to: "/auth" });
       toast.success("Logged out successfully");
     },
     onError: (error) => {
       toast.error(error?.response?.data?.message || "Failed to logout");
-    }
+    },
   });
 
   const handleLogout = async () => {
@@ -31,15 +32,28 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md shadow-md p-4 sticky top-0 z-50" role="navigation" aria-label="Main navigation">
+    <nav
+      className="bg-white/80 backdrop-blur-md shadow-md p-4 sticky top-0 z-50"
+      role="navigation"
+      aria-label="Main navigation"
+    >
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600" aria-label="LinkShrink Home">
-          LinkShrink
+        <Link
+          to="/"
+          className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
+          aria-label="ShrinkLink Home"
+        >
+          ShrinkLink
         </Link>
         <div className="flex items-center">
           {isAuthenticated ? (
             <>
-              <span className="text-gray-800 mr-4" aria-label={`Logged in as ${user.name}`}>{user.name}</span>
+              <span
+                className="text-gray-800 mr-4"
+                aria-label={`Logged in as ${user.name}`}
+              >
+                {user.name}
+              </span>
               <button
                 onClick={handleLogout}
                 disabled={logoutMutation.isLoading}

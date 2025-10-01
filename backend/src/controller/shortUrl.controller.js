@@ -27,7 +27,6 @@ export const createCustomShortUrl = wrapAsync(async (req,res)=>{
 	
 	if(!url || !slug) throw new Error("Inalid data")
 	const user = req.user 
-	console.log("data in the controller", req.body)
 	const shortUrl = await createCustomShortUrlWithUser(url, user.id,slug)
 	res.status(200).send(process.env.APP_URL + shortUrl)
 })

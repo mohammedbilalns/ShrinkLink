@@ -3,46 +3,48 @@ import { getCurrentUser } from "../api/user.api";
 import { login } from "../store/slices/authSlice";
 
 export const checkAuth = async ({context}) => {
+  try {
+    const store = context.store;
+    const queryClient = context.queryClient;
+    const { isAuthenticated } = store.getState().auth;
+    
+    if (isAuthenticated) {
+      return true;
+    }
 
-	try{
-		const store = context.store
-		const queryClient = context.queryClient
+    const data = await queryClient.fetchQuery({
+      queryKey: ["currentUser"],
+      queryFn: getCurrentUser,
+    });
 
-		const data = await queryClient.ensureQueryData({
-			queryKey: ["currentUser"],
-			queryFn: getCurrentUser, 
-		})
-
-		store.dispatch(login(data.user))
-		const {isAuthenticated} = store.getState().auth
-		if(!isAuthenticated){
-			return redirect({to:"/auth"})
-		}
-		return true
-	}
-	catch(err){
-		return redirect({to:"/auth"})
-	}
-}
+    store.dispatch(login(data.user));
+    return true;
+  } catch (err) {
+    store.dispatch(logout());
+    queryClient.removeQueries(["currentUser"]);
+    return redirect({to: "/auth"});
+  }
+};
 
 export const checkPublic = async ({context}) => {
-	try{
-		const store = context.store
-		const queryClient = context.queryClient
+  try {
+    const store = context.store;
+    const queryClient = context.queryClient;
 
-		const data = await queryClient.ensureQueryData({
-			queryKey: ["currentUser"],
-			queryFn: getCurrentUser, 
-		})
+    const { isAuthenticated } = store.getState().auth;
+    
+    if (isAuthenticated) {
+      return redirect({to: "/dashboard"});
+    }
 
-		store.dispatch(login(data.user))
-		const {isAuthenticated} = store.getState().auth
-		if(isAuthenticated){
-			return redirect({to:"/dashboard"})
-		}
-		return true  
-	}
-	catch(err){
-		return true  
-	}
-}
+    const data = await queryClient.fetchQuery({
+      queryKey: ["currentUser"],
+      queryFn: getCurrentUser,
+    });
+
+    store.dispatch(login(data.user));
+    return redirect({to: "/dashboard"});
+  } catch (err) {
+    return true;
+  }
+};
