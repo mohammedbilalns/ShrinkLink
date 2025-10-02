@@ -31,6 +31,10 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       const requestPath = originalRequest.url;
       
+      if (requestPath?.includes("/auth/login") || requestPath?.includes("/auth/register")) {
+        return Promise.reject(error);
+      }
+
       if (requestPath === "/auth/refresh" || requestPath?.includes("/auth/refresh")) {
         isRefreshing = false;
         processQueue(error);

@@ -19,7 +19,7 @@ export const register = wrapAsync(async (req,res)=>{
 export const login = wrapAsync(async (req,res)=>{
 	const {email,password} = req.body
 	if( !email.trim() || !password.trim()){
-		throw new Error("Invalid data ")	
+		throw new Error("Invalid data")	
 	}
 	const {user, accessToken, refreshToken} = await loginUser(email, password)
 	res.cookie("accessToken", accessToken, accessCookieOptions)

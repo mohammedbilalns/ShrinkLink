@@ -6,5 +6,4 @@ const router = Router()
 
 router.get("/urls", authMiddleware,getAllUserUrls)
 
-
 export default router

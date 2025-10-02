@@ -9,5 +9,4 @@ export const dashboardRoute = createRoute({
 	path:"/dashboard",
 	component:Dashboard,
 	beforeLoad: checkAuth,
-
 })

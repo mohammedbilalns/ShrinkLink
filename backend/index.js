@@ -10,6 +10,7 @@ import morgan from "morgan";
 import cors from "cors"
 import cookieParser from "cookie-parser";
 import { attachUser } from "./src/utils/attachUser.js";
+import { redisClient } from "./src/config/redis.config.js";
 configDotenv();
 
 const app = express();
@@ -17,7 +18,7 @@ const PORT = process.env.PORT;
 
 app.use(morgan("tiny"))
 app.use(cors({
-	origin: 'http://localhost:5173',
+	origin: process.env.FRONTEND_URL,
 	credentials: true
 }))
 app.use(express.json());
@@ -32,5 +33,6 @@ app.use("/", redirectRouter )
 app.use(errorHandler)
 app.listen(PORT, () => {
   connectDb();
+	redisClient.ping()
   console.log("Server is running on port: ", PORT);
 });
