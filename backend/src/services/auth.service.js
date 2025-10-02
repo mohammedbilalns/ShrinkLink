@@ -1,4 +1,4 @@
-import { createUser, deleteOtp, findUserByEmail, findUserById, findUserWithPasswordByEmail, getOtp, saveOtp, updateOtp } from "../dao/user.dao.js"
+import { createUser, deleteOtp, deleteUser, findUserByEmail, findUserById, findUserWithPasswordByEmail, getOtp, saveOtp, updateOtp } from "../dao/user.dao.js"
 import { ConflictError, NotFoundError, UnAuthorizedError } from "../utils/errorHandler.js"
 import { comparePassword, hashPassword, signToken, verifyToken } from "../utils/helper.js"
 import { generateOtp, sendOtp } from "../utils/otp.js"
@@ -12,7 +12,10 @@ function generateTokens(user) {
 
 export const registerUser = async (name, email, password)=>{
 	const user = await findUserByEmail(email)
-	if(user) throw new ConflictError("User already exists")
+	if(user){
+		if(user.isVerified) throw new ConflictError("User already exists")
+		await deleteUser(user._id)
+	}
 	const hashedPassword = await hashPassword(password)
 	const newUser = await createUser(name, email,hashedPassword)
 	const otp = generateOtp() 

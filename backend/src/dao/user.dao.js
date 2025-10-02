@@ -17,6 +17,9 @@ export const createUser = async (name, email , password)=>{
 	const newUser = User.create({name, email, password})
 	return newUser
 }
+export const deleteUser = async (id) =>{
+ 	return await User.findByIdAndDelete(id)
+}
 
 export const saveOtp = async (userId, otp) =>{
 	const otpKey = `user:${userId}:otp`
