@@ -1,7 +1,7 @@
+import { redisClient } from "../config/redis.config.js";
 import urlSchema from "../models/shortUrl.model.js";
 
 export const saveShortUrl = async (shortUrl, fullUrl, userId) => {
-	console.log("data in dao", shortUrl, fullUrl, userId)
   try {
     const newUrl = new urlSchema({
       shortUrl,
@@ -12,6 +12,9 @@ export const saveShortUrl = async (shortUrl, fullUrl, userId) => {
     }
 
     await newUrl.save();
+    if (userId) {
+      await redisClient.incr(`user:${userId}:cache_version`);
+    }
   } catch (err) {
 		if(err.code === 11000){
 			throw new ConflictError("Short url already exists")
@@ -37,8 +40,17 @@ export const getCustomShortUrl = async(slug)=>{
 }
 
 export const getAllUrlsByUser = async(userId, skip, limit) =>{
+
+	const cacheVersion = await redisClient.get(`user:${userId}:cache_version`) || 0;
+	const cacheKey = `user:${userId}:urls:${skip}:${limit}:v${cacheVersion}`;
+	const cachedData = await redisClient.get(cacheKey)
+
+	if(cachedData) return JSON.parse(cachedData)
+
 	const [urls, totalCount ] = await Promise.all([urlSchema.find({userId}).skip(skip).limit(limit).sort({createdAt: -1}).lean(),urlSchema.countDocuments({userId})])
-	return {urls, totalCount}
+	const result = {urls, totalCount}
+	await redisClient.setex(cacheKey, 500, JSON.stringify(result))
+	return result 
 }
 
 export const getExistingUrl= async(userId, url) => {
