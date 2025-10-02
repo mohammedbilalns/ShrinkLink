@@ -10,7 +10,7 @@ router.post("/resend",rateLimiter(5,60,["ip", "route"]), resend)
 router.post("/login",rateLimiter(5,60,["ip", "route"]), login)
 router.post("/refresh",rateLimiter(5,60, ["ip", "route"]), refresh)
 router.get("/me", authMiddleware,getMe)
-router.get("/logout", authMiddleware,logout)
+router.get("/logout",logout)
 
 
 export default router
