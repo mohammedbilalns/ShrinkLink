@@ -1,4 +1,4 @@
-import { transporter } from "../config/mail.config.js";
+import axios from "axios";
 import crypto from "crypto"
 
 export const generateOtp = () =>{
@@ -8,24 +8,36 @@ export const generateOtp = () =>{
   return Array.from(crypto.randomBytes(otpLength), byte => chars[byte % chars.length]).join('');
 } 
 
-export const sendOtp = async (email, otp) =>{
-
-	console.log("Sending OTP to", email)
-	
+export const sendOtp = async (email, otp) =>{	
 	try {
-		const mailOptions = {
-			from: process.env.MAIL_FROM,
-			to: email,
-			subject: "SHRINK LINK OTP",
-			text: `Your OTP is ${otp}`,
-		};
-
-		const info = await transporter.sendMail(mailOptions);
-		console.log("mail sent: %s", info.messageId);
-		return info; 
+		const response = await axios.post(
+			process.env.BREVO_API_URL,
+			{
+				sender: {
+					name: "LinkShrink",
+					email: process.env.MAIL_FROM,
+				},
+				to: [
+					{
+						email: email,
+					}
+				],
+				subject: "OTP for LinkShrink",
+				textContent: `Your OTP is ${otp}`,
+			},{
+				headers: {
+					Accept:"application/json",
+					"api-key": process.env.BREVO_API_KEY,
+				}
+			}
+		)
+	
+		console.log("mail sent: %s", response.data.messageId);
+		return response.data 
 	} catch (error) {
 		console.error("Error sending mail", error);
 		throw new Error("Error sending mail");
 
 	}
 }
+
