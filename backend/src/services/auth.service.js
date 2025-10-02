@@ -1,6 +1,7 @@
-import { createUser, findUserByEmail, findUserById, findUserWithPasswordByEmail } from "../dao/user.dao.js"
+import { createUser, deleteOtp, findUserByEmail, findUserById, findUserWithPasswordByEmail, getOtp, saveOtp, updateOtp } from "../dao/user.dao.js"
 import { ConflictError, NotFoundError, UnAuthorizedError } from "../utils/errorHandler.js"
 import { comparePassword, hashPassword, signToken, verifyToken } from "../utils/helper.js"
+import { generateOtp, sendOtp } from "../utils/otp.js"
 
 
 function generateTokens(user) {
@@ -14,14 +15,32 @@ export const registerUser = async (name, email, password)=>{
 	if(user) throw new ConflictError("User already exists")
 	const hashedPassword = await hashPassword(password)
 	const newUser = await createUser(name, email,hashedPassword)
-	const {accessToken, refreshToken} = generateTokens(newUser)
-	return {user: {_id: newUser._id, name: newUser.name, email: newUser.email}, accessToken, refreshToken}
+	const otp = generateOtp() 
+	await Promise.all([sendOtp(email,otp), saveOtp(newUser._id, otp)])
+	return true 
+}
+export const resendOtp = async (email) =>{
+	const user = await findUserByEmail(email)
+	if(!user) throw new NotFoundError("User not found")
+	const otp =  generateOtp()
+	await Promise.all([sendOtp(email,otp), updateOtp(user._id, otp)])
+	return true 
 }
 
+export const verifyUser = async (email, otp) =>{
+	const user = await findUserByEmail(email)
+	if(!user) throw new NotFoundError("User not found")
+	const otpFromStore = await getOtp(user._id)
+	if(otp !== otpFromStore) throw new UnAuthorizedError("Invalid otp")
+	user.isVerified = true
+	await Promise.all([user.save(), deleteOtp(user._id)])
+	const {accessToken, refreshToken} = generateTokens(user)
+	return {user, accessToken, refreshToken}
+}
 
 export const loginUser = async (email, password) =>{
 	const user = await findUserWithPasswordByEmail(email)
-	if(!user) throw new NotFoundError("User not found")
+	if(!user || !user.isVerified ) throw new NotFoundError("User not found")
 	const isValidPassword = await comparePassword(password, user.password )
 	if(!isValidPassword) throw new UnAuthorizedError("Invalid credentials") 
 	const {accessToken, refreshToken} = generateTokens(user)

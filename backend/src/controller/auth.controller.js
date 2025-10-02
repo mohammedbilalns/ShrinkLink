@@ -1,5 +1,5 @@
 import { accessCookieOptions, refreshCookieOptions } from "../config/cookie.config.js";
-import { loginUser, refreshTokens, registerUser } from "../services/auth.service.js";
+import { loginUser, refreshTokens, registerUser, resendOtp, verifyUser } from "../services/auth.service.js";
 import { UnAuthorizedError } from "../utils/errorHandler.js";
 import { wrapAsync } from "../utils/tryCatchWrapper.js";
 
@@ -8,12 +8,31 @@ export const register = wrapAsync(async (req,res)=>{
 	if(!name.trim() || !email.trim() || !password.trim()){
 		throw new Error("Invalid data ")	
 	}
-	const {user, accessToken, refreshToken} = await registerUser(name, email,password)
+  await registerUser(name, email,password)
+	res.status(200).json({ success: true, message:"Otp Sent to your email"})
+})
+
+export const verify = wrapAsync(async (req,res)=>{
+  const {email, otp} = req.body
+  if(!email.trim() || !otp.trim()){
+    throw new Error("Invalid data")
+  }
+  const {user, accessToken, refreshToken} = await verifyUser(email, otp)
 	req.user = user 
+
 	res.cookie("accessToken", accessToken, accessCookieOptions)
 	res.cookie("refreshToken", refreshToken, refreshCookieOptions)
-	res.status(200).json({ user, message:"Login success"}) 
+	res.status(200).json({user, succes: true,  message:"Login success"})
+	
+})
+export const resend = wrapAsync(async (req,res)=>{
+	const {email} = req.body
+	if(!email.trim()){
+		throw new Error("Invalid data")
+	}
+  await resendOtp(email)
 
+	res.status(200).json({ succes: true,  message:"Resend OTP success"})
 })
 
 export const login = wrapAsync(async (req,res)=>{

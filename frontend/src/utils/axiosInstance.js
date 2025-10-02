@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       const requestPath = originalRequest.url;
       
-      if (requestPath?.includes("/auth/login") || requestPath?.includes("/auth/register")) {
+      if (requestPath?.includes("/auth/login") || requestPath?.includes("/auth/register") || requestPath?.includes("/auth/verify")) {
         return Promise.reject(error);
       }
 
@@ -39,9 +39,6 @@ axiosInstance.interceptors.response.use(
         isRefreshing = false;
         processQueue(error);
         store.dispatch(logout());
-        if (!window.location.pathname.includes("/auth")) {
-          window.location.href = "/auth";
-        }
         return Promise.reject(error);
       }
 
@@ -65,11 +62,7 @@ axiosInstance.interceptors.response.use(
         processQueue(null);
         return axiosInstance(originalRequest);
       } catch (err) {
-        processQueue(err);
-        store.dispatch(logout());
-        if (!window.location.pathname.includes("/auth")) {
-          window.location.href = "/auth";
-        }
+        processQueue(err); 
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

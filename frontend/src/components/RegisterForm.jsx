@@ -1,10 +1,8 @@
+// RegisterForm.jsx
 import * as Label from "@radix-ui/react-label";
 import { useState } from "react";
 import { registerUser } from "../api/user.api";
 import { toast } from "sonner";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "@tanstack/react-router";
-import { login } from "../store/slices/authSlice";
 
 function RegisterForm({ toggleForm }) {
   const [name, setName] = useState("");
@@ -12,8 +10,6 @@ function RegisterForm({ toggleForm }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,9 +48,9 @@ function RegisterForm({ toggleForm }) {
     setIsLoading(true);
     try {
       const data = await registerUser(name, email, password);
-      dispatch(login(data.user));
-      toast.success(data.message || "Registration successful!");
-      navigate({ to: "/dashboard" });
+      toast.success(data.message || "Registration successful! Please verify your email.");
+      // Switch to OTP form and pass the email
+      toggleForm('otp', email);
     } catch (err) {
       console.error("Registration error:", err);
       toast.error(err?.response?.data?.message || "Failed to register.");

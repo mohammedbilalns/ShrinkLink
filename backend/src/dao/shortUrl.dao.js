@@ -11,11 +11,14 @@ export const saveShortUrl = async (shortUrl, fullUrl, userId) => {
       newUrl.userId = userId;
     }
 
-    await newUrl.save();
-    if (userId) {
-      await redisClient.incr(`user:${userId}:cache_version`);
-    }
-  } catch (err) {
+		await newUrl.save();
+		if (userId) {
+			const keys = await redisClient.keys(`user:${userId}:urls:*`);
+			if (keys.length > 0) {
+				await redisClient.del(...keys);
+			} 
+		}
+	} catch (err) {
 		if(err.code === 11000){
 			throw new ConflictError("Short url already exists")
 		}
@@ -41,8 +44,7 @@ export const getCustomShortUrl = async(slug)=>{
 
 export const getAllUrlsByUser = async(userId, skip, limit) =>{
 
-	const cacheVersion = await redisClient.get(`user:${userId}:cache_version`) || 0;
-	const cacheKey = `user:${userId}:urls:${skip}:${limit}:v${cacheVersion}`;
+  const cacheKey = `user:${userId}:urls:${skip}:${limit}`;	
 	const cachedData = await redisClient.get(cacheKey)
 
 	if(cachedData) return JSON.parse(cachedData)

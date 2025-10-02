@@ -25,7 +25,7 @@ export const checkPublic = async ({context}) => {
   try {
     const queryClient = context.queryClient;
     const { isAuthenticated } = store.getState().auth;
-    
+
     if (isAuthenticated) {
       return redirect({to: "/dashboard"});
     }
@@ -36,12 +36,15 @@ export const checkPublic = async ({context}) => {
       retry: false, 
       staleTime: 0,
     });
-    
+		console.log("query result ", data)
+
     store.dispatch(login(data.user));
     return redirect({to: "/dashboard"});
   } catch (err) {
 		console.log(err);
     store.dispatch(logout());
+		console.log("session not found", err)
     return true;
   }
 };
+

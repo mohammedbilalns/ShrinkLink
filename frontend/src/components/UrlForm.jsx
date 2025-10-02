@@ -8,6 +8,7 @@ import QRCodeGenerator from "./QrCode";
 import { useMutation } from "@tanstack/react-query";
 
 function UrlForm() {
+	console.log("url form")
   const [url, setUrl] = useState("");
   const [slug, setSlug] = useState("");
   const [shortUrl, setShortUrl] = useState("");

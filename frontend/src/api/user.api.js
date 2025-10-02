@@ -10,6 +10,16 @@ export const registerUser = async(name, email , password) => {
 	return data
 }
 
+export const verifyOtp = async(email, otp) => {
+	const {data} = await axiosInstance.post('/auth/verify', {email, otp})
+	return data
+}
+
+export const resendOtp = async(email) => {
+	const {data} = await axiosInstance.post('/auth/resend', {email})
+	return data
+}
+
 export const logoutUser = async()=> {
 	const {data} = await axiosInstance.get('/auth/logout')
 	return data 
@@ -25,7 +35,5 @@ export const getAllUserUrls = async( page = 1, limit = 10) => {
 	return data
 }
 
-export const logutUser = async()=> {
-	const {data} = await axiosInstance.get('/auth/logout')
-	return data 
-}
+
+

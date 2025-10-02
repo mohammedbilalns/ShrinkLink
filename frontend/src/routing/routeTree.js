@@ -1,4 +1,4 @@
-import { createRootRoute, ErrorComponent } from "@tanstack/react-router"
+import { createRootRoute } from "@tanstack/react-router"
 import RootLayout from "../RootLayout"
 import { authRoute } from "./auth.route"
 import { homeRoute } from "./home.route"
