@@ -71,6 +71,11 @@ function UrlForm() {
     setHasGeneratedLink(false);
   };
 
+	const handleUrlClick = (event) =>{
+		event.preventDefault();
+		setTimeout(() => queryClient.invalidateQueries("userUrls"), 1000);
+		window.open(shortUrl, "_blank", "noopener,noreferrer");
+	}
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-2xl">
       <div className="bg-white shadow-lg rounded-2xl px-6 py-6 w-full flex flex-col gap-4">
@@ -143,8 +148,7 @@ function UrlForm() {
             <span className="font-semibold">Your short URL: </span>
             <a
               href={shortUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+							onClick={handleUrlClick} 
               className="text-blue-600 underline break-all ml-1"
             >
               {shortUrl}

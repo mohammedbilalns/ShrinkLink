@@ -8,7 +8,7 @@ router.post("/register",rateLimiter(5,60,["ip", "route"]), register)
 router.post("/verify",rateLimiter(5,60,["ip", "route"]), verify)
 router.post("/resend",rateLimiter(5,60,["ip", "route"]), resend)
 router.post("/login",rateLimiter(5,60,["ip", "route"]), login)
-router.post("/refresh",rateLimiter(5,60, ["ip", "route"]), refresh)
+router.post("/refresh",rateLimiter(20,60, ["ip", "route"]), refresh)
 router.get("/me", authMiddleware,getMe)
 router.get("/logout",logout)
 

@@ -15,8 +15,8 @@ export const createShortUrl = wrapAsync(async (req, res) => {
 });
 
 export const redirectUrl = wrapAsync(async (req, res) => {
-  const { id } = req.params;
-  const url = await getUrlFromShortUrl(id);
+  const { id } = req.params
+  const url = await getUrlFromShortUrl(id,req.user._id);
   if (!url) throw new Error("Short url is not found");
   res.redirect(url);
 });
@@ -30,3 +30,4 @@ export const createCustomShortUrl = wrapAsync(async (req,res)=>{
 	const shortUrl = await createCustomShortUrlWithUser(url, user.id,slug)
 	res.status(200).send(process.env.APP_URL + shortUrl)
 })
+

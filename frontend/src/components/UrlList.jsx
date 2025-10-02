@@ -36,6 +36,11 @@ function UrlsList() {
   const handleRetry = () => {
     queryClient.invalidateQueries("userUrls");
   };
+	const handleUrlClick = (shortUrl, event) =>{
+		event.preventDefault();
+		setTimeout(() => queryClient.invalidateQueries("userUrls"), 1000);
+		window.open(baseUrl + shortUrl, "_blank", "noopener,noreferrer");
+	}
 
   const placeholderRows = [...Array(limit)].map((_, i) => (
     <tr key={`placeholder-${i}`} className="border-t">
@@ -139,8 +144,7 @@ function UrlsList() {
                     <div className="flex items-center gap-2">
                       <a
                         href={baseUrl + url.shortUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+												onClick={(event)=>handleUrlClick(url.shortUrl,event)}
                         className="text-blue-600 underline break-all"
                       >
                         {baseUrl + url.shortUrl}

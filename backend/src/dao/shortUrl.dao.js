@@ -12,12 +12,7 @@ export const saveShortUrl = async (shortUrl, fullUrl, userId) => {
     }
 
 		await newUrl.save();
-		if (userId) {
-			const keys = await redisClient.keys(`user:${userId}:urls:*`);
-			if (keys.length > 0) {
-				await redisClient.del(...keys);
-			} 
-		}
+		if (userId) await deleteUsersCache(userId)
 	} catch (err) {
 		if(err.code === 11000){
 			throw new ConflictError("Short url already exists")
@@ -26,12 +21,13 @@ export const saveShortUrl = async (shortUrl, fullUrl, userId) => {
   }
 };
 
-export const getUrlFromShortUrl = async (shortUrl) => {
+export const getUrlFromShortUrl = async (shortUrl, userId) => {
   try {
     const url = await urlSchema.findOneAndUpdate(
       { shortUrl },
       { $inc: { clicks: 1 } }
     );
+		if(userId) await deleteUsersCache(userId)
     return url.fullUrl;
   } catch (err) {
     throw new Error(err.message);
@@ -58,3 +54,12 @@ export const getAllUrlsByUser = async(userId, skip, limit) =>{
 export const getExistingUrl= async(userId, url) => {
  return await urlSchema.findOne({userId, fullUrl: url})	
 }
+
+
+const deleteUsersCache = async (userId) => {
+	const keys = await redisClient.keys(`user:${userId}:urls:*`);
+	if (keys.length > 0) {
+		await redisClient.del(...keys);
+	}
+};
+
