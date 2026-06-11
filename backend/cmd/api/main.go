@@ -9,6 +9,7 @@ import (
 	"github.com/mohammedbilalns/shrinklink/internal/app"
 	"github.com/mohammedbilalns/shrinklink/internal/config"
 	"github.com/mohammedbilalns/shrinklink/internal/db"
+	"github.com/mohammedbilalns/shrinklink/internal/middleware"
 	"github.com/mohammedbilalns/shrinklink/internal/router"
 )
 
@@ -47,10 +48,15 @@ func main(){
 
 	mux := router.Register(app)
 
+	handler := middleware.Logger(mux)
+	handler = middleware.Recovery(handler)
+	handler = middleware.Security(handler)
+	handler = middleware.CORS(cfg.FrontendURL)(handler)
+
 
 	server := &http.Server{
 		Addr: ":" + cfg.Port,
-		Handler: mux,
+		Handler: handler,
 	}
 
 	log.Printf("Server listening on %s", server.Addr)
