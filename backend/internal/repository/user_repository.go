@@ -17,7 +17,7 @@ type UserRepository interface {
 		email string,
 	) (*model.User, error)
 
-	FindById(
+	FindByID(
 		ctx context.Context,
 		id string,
 	) (*model.User, error)
