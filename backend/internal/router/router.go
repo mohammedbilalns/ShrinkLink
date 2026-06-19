@@ -13,6 +13,11 @@ func Register(app *app.App) *http.ServeMux {
 
 	mux.HandleFunc("/health", handler.Health)
 
+	mux.Handle("/api/auth/", http.StripPrefix("/api/auth", AuthRouter(app)))
+	mux.Handle("/api/url" , http.StripPrefix("/api/url", UrlRouter(app) ))
+	mux.Handle("/api/user", http.StripPrefix("/api/user", UserRouter(app)))
+
+
 	return mux 
 }
 
