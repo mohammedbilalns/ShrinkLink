@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/mohammedbilalns/shrinklink/internal/model"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type UserRepository interface {
@@ -19,12 +20,12 @@ type UserRepository interface {
 
 	FindByID(
 		ctx context.Context,
-		id string,
+		id bson.ObjectID,
 	) (*model.User, error)
 
 	Delete(
 		ctx context.Context,
-		id string,
+		id bson.ObjectID,
 	) error
 
 }

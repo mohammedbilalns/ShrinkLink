@@ -11,7 +11,7 @@ type User struct {
 	Name string `bson:"name"`
 	Email string `bson:"email"`
 	Password string `bson:"password"`
-	isVerified bool `bson:"isVerified"`
+	IsVerified bool `bson:"isVerified"`
 	CreatedAt time.Time `bson:"createdAt"`
 	UpdatedAt time.Time `bson:"updatedAt"`
 }
