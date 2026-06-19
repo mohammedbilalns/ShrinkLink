@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/mohammedbilalns/shrinklink/internal/model"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type ShortURLRepository interface {
@@ -17,11 +18,22 @@ type ShortURLRepository interface {
 		shortURL string, 
 	) (*model.ShortURL, error)
 
-	FindAllByUser(
+	FindByShortURLAndIncrementClicks(
 		ctx context.Context,
-		userId string,
-		skip int,
-		limit int, 
-	) ([]model.ShortURL, error)
+		shortURL string,
+	)(*model.ShortURL, error)
+
+	FindByUser(
+		ctx context.Context,
+		userId bson.ObjectID,
+		skip int64,
+		limit int64, 
+	) ([]model.ShortURL, int64, error)
+
+	FindExistingURL(
+		ctx context.Context,
+		userID bson.ObjectID,
+		fullURL string,
+	)(*model.ShortURL, error)
 
 }
