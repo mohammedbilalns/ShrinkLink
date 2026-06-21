@@ -107,7 +107,7 @@ func (s *urlService) CreateShortURL(
 		}
 	}
 
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		slug := utils.GenerateSlug(8)
 		shortURL, err := s.createShortURLRecord(ctx, normalizedURL, slug, owner)
 		if err == nil {
@@ -146,12 +146,6 @@ func (s *urlService) GetUserURLs(
 	page int64,
 	limit int64,
 ) ([]model.ShortURL, int64, error) {
-	if page < 1 {
-		page = 1
-	}
-	if limit < 1 {
-		limit = 10
-	}
 
 	skip := (page - 1) * limit
 	urls, totalCount, err := s.shortURLRepo.FindByUser(ctx, userID, skip, limit)
