@@ -15,25 +15,29 @@ type ShortURLRepository interface {
 
 	FindByShortURL(
 		ctx context.Context,
-		shortURL string, 
+		shortURL string,
 	) (*model.ShortURL, error)
 
 	FindByShortURLAndIncrementClicks(
 		ctx context.Context,
 		shortURL string,
-	)(*model.ShortURL, error)
+	) (*model.ShortURL, error)
 
 	FindByUser(
 		ctx context.Context,
 		userId bson.ObjectID,
 		skip int64,
-		limit int64, 
+		limit int64,
 	) ([]model.ShortURL, int64, error)
 
 	FindExistingURL(
 		ctx context.Context,
 		userID bson.ObjectID,
 		fullURL string,
-	)(*model.ShortURL, error)
+	) (*model.ShortURL, error)
 
+	FindByShortSlug(
+		ctx context.Context,
+		shortURL string,
+	) (*model.ShortURL, error)
 }

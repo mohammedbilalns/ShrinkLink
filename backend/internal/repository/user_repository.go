@@ -28,4 +28,9 @@ type UserRepository interface {
 		id bson.ObjectID,
 	) error
 
+	UpdateVerification(
+		ctx context.Context,
+		id bson.ObjectID,
+		verified bool,
+	) error
 }

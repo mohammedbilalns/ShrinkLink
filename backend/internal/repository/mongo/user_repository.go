@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"time"
 
 	"github.com/mohammedbilalns/shrinklink/internal/model"
 	"github.com/mohammedbilalns/shrinklink/internal/repository"
@@ -17,18 +18,26 @@ func (r *MongoUserRepository) Create(
 	ctx context.Context,
 	user *model.User,
 ) error {
+	now := time.Now().UTC()
+
+	if user.ID == (bson.ObjectID{}) {
+		user.ID = bson.NewObjectID()
+	}
+
+	user.CreatedAt = now
+	user.UpdatedAt = now
 
 	_, err := r.collection.InsertOne(
 		ctx,
 		user,
-		)
-	return  err 
+	)
+	return err
 }
 
 func (r *MongoUserRepository) FindByEmail(
 	ctx context.Context,
 	email string,
-)(*model.User, error){
+) (*model.User, error) {
 
 	var user model.User
 
@@ -37,19 +46,22 @@ func (r *MongoUserRepository) FindByEmail(
 		bson.M{
 			"email": email,
 		},
-		).Decode(&user)
+	).Decode(&user)
 
 	if err != nil {
-		return nil, err 
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
 	}
 
-	return &user, nil 
+	return &user, nil
 }
 
 func (r *MongoUserRepository) FindByID(
 	ctx context.Context,
 	id bson.ObjectID,
-)(*model.User , error) {
+) (*model.User, error) {
 
 	var user model.User
 
@@ -58,12 +70,15 @@ func (r *MongoUserRepository) FindByID(
 		bson.M{
 			"_id": id,
 		},
-		).Decode(&user)
+	).Decode(&user)
 
 	if err != nil {
-		return nil, err 
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
 	}
-	return &user, nil 
+	return &user, nil
 }
 
 func (r *MongoUserRepository) Delete(
@@ -76,9 +91,28 @@ func (r *MongoUserRepository) Delete(
 		bson.M{
 			"_id": id,
 		},
-		)
+	)
 
-	return err 
+	return err
+}
+
+func (r *MongoUserRepository) UpdateVerification(
+	ctx context.Context,
+	id bson.ObjectID,
+	verified bool,
+) error {
+	_, err := r.collection.UpdateOne(
+		ctx,
+		bson.M{"_id": id},
+		bson.M{
+			"$set": bson.M{
+				"isVerified": verified,
+				"updatedAt":  time.Now().UTC(),
+			},
+		},
+	)
+
+	return err
 }
 
 func NewUserRepository(
