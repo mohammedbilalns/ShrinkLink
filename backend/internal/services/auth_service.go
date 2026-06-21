@@ -12,7 +12,7 @@ type AuthService interface {
 		name string,
 		email string,
 		password string,
-	)error 
+	) error
 
 	ResendOTP(
 		ctx context.Context,
@@ -23,7 +23,7 @@ type AuthService interface {
 		ctx context.Context,
 		email string,
 		otp string,
-	)(*LoginResponse, error)
+	) (*LoginResponse, error)
 
 	LoginUser(
 		ctx context.Context,
@@ -34,7 +34,12 @@ type AuthService interface {
 	RefreshTokens(
 		ctx context.Context,
 		token string,
-	)(*TokenResponse , error)
+	) (*TokenResponse, error)
+
+	CurrentUser(
+		ctx context.Context,
+		token string,
+	) (*model.User, error)
 }
 
 type TokenResponse struct {
@@ -47,6 +52,3 @@ type LoginResponse struct {
 	AccessToken  string
 	RefreshToken string
 }
-
-
-
