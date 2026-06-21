@@ -84,7 +84,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeJSON(w, http.StatusCreated, map[string]string{
-		"message": "Registration successful! Please verify your email.",
+		"message": "Please verify your email.",
 	})
 }
 

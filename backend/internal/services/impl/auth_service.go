@@ -13,6 +13,8 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
+var errUserAlreadyExists = errors.New("user already exists")
+
 type authService struct {
 	userRepo  repository.UserRepository
 	otpCache  cache.OTPCache
@@ -91,7 +93,7 @@ func (s *authService) RegisterUser(
 
 	if user != nil {
 		if user.IsVerified {
-			return errors.New("user already exists")
+			return errUserAlreadyExists
 		}
 
 		if err := s.userRepo.Delete(ctx, user.ID); err != nil {
@@ -112,6 +114,9 @@ func (s *authService) RegisterUser(
 	}
 
 	if err := s.userRepo.Create(ctx, newUser); err != nil {
+		if errors.Is(err, repository.ErrDuplicateEmail) {
+			return errUserAlreadyExists
+		}
 		return err
 	}
 

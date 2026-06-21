@@ -2,12 +2,14 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/mohammedbilalns/shrinklink/internal/model"
 	"github.com/mohammedbilalns/shrinklink/internal/repository"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type MongoUserRepository struct {
@@ -31,7 +33,26 @@ func (r *MongoUserRepository) Create(
 		ctx,
 		user,
 	)
+	if err != nil {
+		if isDuplicateKeyError(err) {
+			return repository.ErrDuplicateEmail
+		}
+	}
 	return err
+}
+
+func isDuplicateKeyError(err error) bool {
+	var writeErr mongo.WriteException
+	if errors.As(err, &writeErr) && writeErr.HasErrorCode(11000) {
+		return true
+	}
+
+	var bulkErr mongo.BulkWriteException
+	if errors.As(err, &bulkErr) && bulkErr.HasErrorCode(11000) {
+		return true
+	}
+
+	return false
 }
 
 func (r *MongoUserRepository) FindByEmail(
@@ -117,8 +138,23 @@ func (r *MongoUserRepository) UpdateVerification(
 
 func NewUserRepository(
 	db *mongo.Database,
-) repository.UserRepository {
-	return &MongoUserRepository{
+) (repository.UserRepository, error) {
+	repo := &MongoUserRepository{
 		collection: db.Collection("users"),
 	}
+
+	_, err := repo.collection.Indexes().CreateOne(
+		context.Background(),
+		mongo.IndexModel{
+			Keys: bson.D{{Key: "email", Value: 1}},
+			Options: options.Index().
+				SetUnique(true).
+				SetName("uniq_users_email"),
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return repo, nil
 }

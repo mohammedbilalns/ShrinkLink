@@ -2,10 +2,13 @@ package repository
 
 import (
 	"context"
+	"errors"
 
 	"github.com/mohammedbilalns/shrinklink/internal/model"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
+
+var ErrDuplicateEmail = errors.New("duplicate email")
 
 type UserRepository interface {
 	Create(

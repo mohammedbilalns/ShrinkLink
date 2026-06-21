@@ -15,11 +15,11 @@ import (
 )
 
 type mailService struct {
-	apiURL  string
-	apiKey  string
-	from    string
-	appName string
-	client  *http.Client
+	apiURL      string
+	apiKey      string
+	senderEmail string
+	appName     string
+	client      *http.Client
 }
 
 func NewMailService(cfg config.Config) services.MailService {
@@ -29,10 +29,10 @@ func NewMailService(cfg config.Config) services.MailService {
 	}
 
 	return &mailService{
-		apiURL:  apiURL,
-		apiKey:  strings.TrimSpace(cfg.BrevoAPIKey),
-		from:    strings.TrimSpace(cfg.MailFrom),
-		appName: "ShrinkLink",
+		apiURL:      apiURL,
+		apiKey:      strings.TrimSpace(cfg.BrevoAPIKey),
+		senderEmail: strings.TrimSpace(cfg.BrevoSenderMail),
+		appName:     "ShrinkLink",
 		client: &http.Client{
 			Timeout: 15 * time.Second,
 		},
@@ -59,7 +59,7 @@ func (s *mailService) SendVerificationEmail(
 	toName string,
 	otp string,
 ) error {
-	if s.apiKey == "" || s.from == "" {
+	if s.apiKey == "" || s.senderEmail == "" {
 		return errors.New("mail service is not configured")
 	}
 
@@ -68,7 +68,7 @@ func (s *mailService) SendVerificationEmail(
 		HTMLContent: buildVerificationEmailHTML(toName, otp),
 		TextContent: fmt.Sprintf("Your ShrinkLink verification code is %s. It expires in 5 minutes.", otp),
 	}
-	payload.Sender.Email = s.from
+	payload.Sender.Email = s.senderEmail
 	payload.Sender.Name = s.appName
 	payload.To = []struct {
 		Email string `json:"email"`
