@@ -7,12 +7,11 @@ import (
 )
 
 type ShortURL struct {
-	ID bson.ObjectID `bson:"_id,omitempty"`
-	FullURL string `bson:"fullUrl"`
-	ShortURL string `bson:"shortUrl"`
-	Clicks int `bson:"clicks"`
-	UserId bson.ObjectID `bson:"userId"`
-
-	CreatedAt time.Time `bson:"createdAt"`
-	UpdatedAt time.Time `bson:"udpatedAt"`
+	ID        bson.ObjectID `bson:"_id,omitempty" json:"_id,omitempty"`
+	FullURL   string        `bson:"fullUrl" json:"fullUrl"`
+	ShortURL  string        `bson:"shortUrl" json:"shortUrl"`
+	Clicks    int           `bson:"clicks" json:"clicks"`
+	UserID    bson.ObjectID `bson:"userId,omitempty" json:"userId,omitempty"`
+	CreatedAt time.Time     `bson:"createdAt" json:"createdAt"`
+	UpdatedAt time.Time     `bson:"updatedAt" json:"updatedAt"`
 }
