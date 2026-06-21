@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/mohammedbilalns/shrinklink/internal/httpx"
 )
 
 type apiError struct {
@@ -14,11 +14,6 @@ type apiError struct {
 
 const genericErrorMessage = "Something went wrong"
 
-func writeJSON(w http.ResponseWriter, status int, payload any) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	_ = json.NewEncoder(w).Encode(payload)
-}
 
 func writeError(w http.ResponseWriter, status int, message string) {
 	message = strings.TrimSpace(message)
@@ -29,11 +24,11 @@ func writeError(w http.ResponseWriter, status int, message string) {
 	log.Printf("backend error (status=%d): %s", status, message)
 
 	if status >= http.StatusInternalServerError || !isClientSafeMessage(message) {
-		writeJSON(w, http.StatusInternalServerError, apiError{Message: genericErrorMessage})
+		httpx.WriteJSON(w, http.StatusInternalServerError, apiError{Message: genericErrorMessage})
 		return
 	}
 
-	writeJSON(w, status, apiError{Message: message})
+	httpx.WriteJSON(w, status, apiError{Message: message})
 }
 
 func isClientSafeMessage(message string) bool {
@@ -60,20 +55,4 @@ func isClientSafeMessage(message string) bool {
 	default:
 		return false
 	}
-}
-
-func parseJSONBody(r *http.Request, dst any) error {
-	defer r.Body.Close()
-	if err := json.NewDecoder(r.Body).Decode(dst); err != nil {
-		return errors.New("invalid request body")
-	}
-	return nil
-}
-
-func getCookieValue(r *http.Request, name string) string {
-	cookie, err := r.Cookie(name)
-	if err != nil {
-		return ""
-	}
-	return strings.TrimSpace(cookie.Value)
 }

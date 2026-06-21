@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/mohammedbilalns/shrinklink/internal/config"
+	"github.com/mohammedbilalns/shrinklink/internal/httpx"
 	"github.com/mohammedbilalns/shrinklink/internal/services"
 )
 
@@ -64,7 +65,7 @@ func (h *AuthHandler) clearAuthCookies(w http.ResponseWriter) {
 
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	var req registerRequest
-	if err := parseJSONBody(r, &req); err != nil {
+	if err := httpx.ParseJSON(r, &req); err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -83,14 +84,14 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, map[string]string{
+	httpx.WriteJSON(w, http.StatusCreated, map[string]string{
 		"message": "Please verify your email.",
 	})
 }
 
 func (h *AuthHandler) VerifyOTP(w http.ResponseWriter, r *http.Request) {
 	var req verifyRequest
-	if err := parseJSONBody(r, &req); err != nil {
+	if err := httpx.ParseJSON(r, &req); err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -102,7 +103,7 @@ func (h *AuthHandler) VerifyOTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.setAuthCookies(w, response.AccessToken, response.RefreshToken)
-	writeJSON(w, http.StatusOK, map[string]any{
+	httpx.WriteJSON(w, http.StatusOK, map[string]any{
 		"message": "Email verified successfully!",
 		"user":    response.User,
 	})
@@ -112,7 +113,7 @@ func (h *AuthHandler) ResendOTP(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		Email string `json:"email"`
 	}
-	if err := parseJSONBody(r, &req); err != nil {
+	if err := httpx.ParseJSON(r, &req); err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -122,14 +123,14 @@ func (h *AuthHandler) ResendOTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, map[string]string{
+	httpx.WriteJSON(w, http.StatusOK, map[string]string{
 		"message": "OTP has been resent",
 	})
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var req loginRequest
-	if err := parseJSONBody(r, &req); err != nil {
+	if err := httpx.ParseJSON(r, &req); err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -141,14 +142,14 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.setAuthCookies(w, response.AccessToken, response.RefreshToken)
-	writeJSON(w, http.StatusOK, map[string]any{
+	httpx.WriteJSON(w, http.StatusOK, map[string]any{
 		"message": "Login successful!",
 		"user":    response.User,
 	})
 }
 
 func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
-	refreshToken := getCookieValue(r, "refreshToken")
+	refreshToken := httpx.CookieValue(r, "refreshToken")
 	if refreshToken == "" {
 		writeError(w, http.StatusUnauthorized, "refresh token not found")
 		return
@@ -161,13 +162,13 @@ func (h *AuthHandler) RefreshToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.setAuthCookies(w, response.AccessToken, response.RefreshToken)
-	writeJSON(w, http.StatusOK, map[string]string{
+	httpx.WriteJSON(w, http.StatusOK, map[string]string{
 		"message": "token refreshed",
 	})
 }
 
 func (h *AuthHandler) GetSession(w http.ResponseWriter, r *http.Request) {
-	accessToken := getCookieValue(r, "accessToken")
+	accessToken := httpx.CookieValue(r, "accessToken")
 	if accessToken == "" {
 		writeError(w, http.StatusUnauthorized, "access token not found")
 		return
@@ -179,14 +180,14 @@ func (h *AuthHandler) GetSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, map[string]any{
+	httpx.WriteJSON(w, http.StatusOK, map[string]any{
 		"user": user,
 	})
 }
 
 func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	h.clearAuthCookies(w)
-	writeJSON(w, http.StatusOK, map[string]string{
+	httpx.WriteJSON(w, http.StatusOK, map[string]string{
 		"message": "Logged out successfully",
 	})
 }

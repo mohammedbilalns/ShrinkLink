@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/mohammedbilalns/shrinklink/internal/httpx"
 	"github.com/mohammedbilalns/shrinklink/internal/services"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -34,7 +35,7 @@ type createURLRequest struct {
 }
 
 func (h *URLHandler) currentUserID(r *http.Request, required bool) (*bson.ObjectID, error) {
-	token := getCookieValue(r, "accessToken")
+	token :=httpx.CookieValue(r, "accessToken")
 	if token == "" {
 		if required {
 			return nil, http.ErrNoCookie
@@ -56,7 +57,7 @@ func (h *URLHandler) currentUserID(r *http.Request, required bool) (*bson.Object
 
 func (h *URLHandler) CreateShortURI(w http.ResponseWriter, r *http.Request) {
 	var req createURLRequest
-	if err := parseJSONBody(r, &req); err != nil {
+	if err := httpx.ParseJSON(r, &req); err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -68,12 +69,12 @@ func (h *URLHandler) CreateShortURI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, shortURL)
+	httpx.WriteJSON(w, http.StatusCreated, shortURL)
 }
 
 func (h *URLHandler) CreateCustomURI(w http.ResponseWriter, r *http.Request) {
 	var req createURLRequest
-	if err := parseJSONBody(r, &req); err != nil {
+	if err := httpx.ParseJSON(r, &req); err != nil {
 		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -90,7 +91,7 @@ func (h *URLHandler) CreateCustomURI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, shortURL)
+	httpx.WriteJSON(w, http.StatusCreated, shortURL)
 }
 
 func (h *RedirectHandler) RedirectURI(w http.ResponseWriter, r *http.Request) {

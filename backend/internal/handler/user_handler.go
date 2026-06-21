@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/mohammedbilalns/shrinklink/internal/httpx"
 	"github.com/mohammedbilalns/shrinklink/internal/services"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -21,7 +22,7 @@ func NewUserHandler(authService services.AuthService, urlService services.URLSer
 }
 
 func (h *UserHandler) authenticatedUser(r *http.Request) (*bson.ObjectID, error) {
-	token := getCookieValue(r, "accessToken")
+	token := httpx.CookieValue(r, "accessToken")
 	if token == "" {
 		return nil, http.ErrNoCookie
 	}
@@ -62,7 +63,7 @@ func (h *UserHandler) GetUserURIs(w http.ResponseWriter, r *http.Request) {
 		totalPages = (totalCount + limit - 1) / limit
 	}
 
-	writeJSON(w, http.StatusOK, map[string]any{
+	httpx.WriteJSON(w, http.StatusOK, map[string]any{
 		"urls":       urls,
 		"page":       page,
 		"limit":      limit,
