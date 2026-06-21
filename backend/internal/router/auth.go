@@ -7,16 +7,17 @@ import (
 	"github.com/mohammedbilalns/shrinklink/internal/handler"
 )
 
-func AuthRouter(   app *app.App) *http.ServeMux {
+func AuthRouter(app *app.App) *http.ServeMux {
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("POST /register", handler.Register)
-	mux.HandleFunc("POST /verify", handler.VerifyOTP)
-	mux.HandleFunc("POST /resend", handler.ResendOTP)
-	mux.HandleFunc("POST /login", handler.Login)
-	mux.HandleFunc("POST /refresh", handler.RefreshToken)
-	mux.HandleFunc("GET /me", handler.GetSession)
-	mux.HandleFunc("GET /logout", handler.Logout)
+	authHandler := handler.NewAuthHandler(app.AuthService, app.Config)
+	mux.HandleFunc("POST /register", authHandler.Register)
+	mux.HandleFunc("POST /verify", authHandler.VerifyOTP)
+	mux.HandleFunc("POST /resend", authHandler.ResendOTP)
+	mux.HandleFunc("POST /login", authHandler.Login)
+	mux.HandleFunc("POST /refresh", authHandler.RefreshToken)
+	mux.HandleFunc("GET /me", authHandler.GetSession)
+	mux.HandleFunc("GET /logout", authHandler.Logout)
 
-	return mux 
+	return mux
 }

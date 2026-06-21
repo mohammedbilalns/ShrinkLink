@@ -7,10 +7,11 @@ import (
 	"github.com/mohammedbilalns/shrinklink/internal/handler"
 )
 
-func UrlRouter( app *app.App ) *http.ServeMux {
+func UrlRouter(app *app.App) *http.ServeMux {
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("POST /create", handler.CreateShortURI)
-	mux.HandleFunc("POST /custom", handler.CreateCustomURI)
-	return mux 
+	urlHandler := handler.NewURLHandler(app.URLService, app.AuthService)
+	mux.HandleFunc("POST /create", urlHandler.CreateShortURI)
+	mux.HandleFunc("POST /custom", urlHandler.CreateCustomURI)
+	return mux
 }
