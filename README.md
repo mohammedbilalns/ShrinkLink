@@ -32,13 +32,8 @@ It allows users to create short URLs, generate custom slugs, track click counts,
 ### Frontend
 
 - React
-- Vite
-- TanStack Router
 - TanStack Query
 - Redux Toolkit
-- Axios
-- Tailwind CSS
-- Sonner Toasts
 
 ---
 
