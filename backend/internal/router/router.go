@@ -33,7 +33,7 @@ func Register(application *app.App) *http.ServeMux {
 	userMux := http.NewServeMux()
 	userMux.HandleFunc("GET /urls", userHandler.GetUserURIs)
 
-	mux.Handle("/api/auth/", http.StripPrefix("/api/auth", authMux))
+	mux.Handle("/auth/", http.StripPrefix("/auth", authMux))
 	mux.Handle("/api/url/", http.StripPrefix("/api/url", urlMux))
 	mux.Handle("/api/user/", http.StripPrefix("/api/user", userMux))
 	mux.HandleFunc("GET /{id}", redirectHandler.RedirectURI)

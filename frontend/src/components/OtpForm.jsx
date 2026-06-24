@@ -144,7 +144,7 @@ function OtpForm({ toggleForm, email }) {
             maxLength={6}
             pattern="[a-zA-Z0-9]{6}"
             required
-            className="w-full px-4 py-3 mt-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-center text-xl tracking-widest uppercase"
+            className="w-full px-4 py-3 mt-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none text-center text-xl tracking-widest uppercase"
             onChange={handleOtpChange}
             value={otp}
             disabled={isLoading || timeLeft <= 0}
@@ -153,7 +153,7 @@ function OtpForm({ toggleForm, email }) {
         <button
           type="submit"
           disabled={isLoading || timeLeft <= 0}
-          className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? "Verifying..." : "Verify"}
         </button>
@@ -161,14 +161,14 @@ function OtpForm({ toggleForm, email }) {
       <div className="flex justify-between mt-4 text-sm">
         <button 
           onClick={() => toggleForm('register')} 
-          className="text-blue-600 hover:underline cursor-pointer"
+          className="text-emerald-600 hover:underline cursor-pointer"
           disabled={isLoading}
         >
           Back to Register
         </button>
         <button 
           onClick={handleResendOtp} 
-          className="text-blue-600 hover:underline cursor-pointer disabled:text-gray-400"
+          className="text-emerald-600 hover:underline cursor-pointer disabled:text-gray-400"
           disabled={isLoading || isResending || resendTimeLeft > 0}
         >
           {isResending 

@@ -59,7 +59,7 @@ function LoginForm({ toggleForm }) {
             type="email"
             placeholder="you@example.com"
             required
-            className="w-full px-4 py-3 mt-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full px-4 py-3 mt-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none"
             onChange={(event) => setEmail(event.target.value)}
             value={email}
             disabled={isLoading}
@@ -74,7 +74,7 @@ function LoginForm({ toggleForm }) {
             type="password"
             placeholder="••••••••"
             required
-            className="w-full px-4 py-3 mt-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full px-4 py-3 mt-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none"
             onChange={(event) => setPassword(event.target.value)}
             value={password}
             disabled={isLoading}
@@ -83,7 +83,7 @@ function LoginForm({ toggleForm }) {
         <button
           type="submit"
           disabled={isLoading}
-          className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? "Logging in..." : "Login"}
         </button>
@@ -92,7 +92,7 @@ function LoginForm({ toggleForm }) {
         Don't have an account?{" "}
         <button 
           onClick={() => toggleForm('register')} 
-          className="text-blue-600 hover:underline cursor-pointer"
+          className="text-emerald-600 hover:underline cursor-pointer"
           disabled={isLoading}
         >
           Register
