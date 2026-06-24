@@ -76,15 +76,15 @@ export default function HomePage() {
   ];
 
   return (
-    <main className="min-h-[calc(100vh-5rem)] flex flex-col bg-gradient-to-br from-emerald-50 to-teal-50 text-gray-800">
+    <main className="min-h-[calc(100vh-5rem)] flex flex-col bg-linear-to-br from-emerald-50 to-teal-50 text-gray-800">
       {/* Hero Section */}
-      <section className="flex-grow flex flex-col items-center justify-center px-4 py-12 md:py-20">
+      <section className="grow flex flex-col items-center justify-center px-4 py-12 md:py-20">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600 mb-6">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-emerald-600 to-teal-600 mb-6">
             ShrinkLink
           </h1>
           <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto">
-            Transform your long URLs into short, shareable links in seconds
+            Transform your URLs into short, shareable links in seconds
           </p>
 
           {/* URL Form */}

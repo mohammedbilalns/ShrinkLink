@@ -80,7 +80,7 @@ function UrlForm() {
     <form onSubmit={handleSubmit} className="w-full max-w-2xl">
       <div className="bg-white shadow-lg rounded-2xl px-6 py-6 w-full flex flex-col gap-4">
         <Label.Root htmlFor="url" className="text-sm font-medium text-gray-700">
-          Enter your long URL
+          Enter URL
         </Label.Root>
         <input
           id="url"
