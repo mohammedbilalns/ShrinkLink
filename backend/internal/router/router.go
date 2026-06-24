@@ -12,7 +12,7 @@ func Register(application *app.App) *http.ServeMux {
 	mux := http.NewServeMux()
 	authHandler := handler.NewAuthHandler(application.AuthService, application.Config)
 	urlHandler := handler.NewURLHandler(application.URLService, application.AuthService)
-	userHandler := handler.NewUserHandler(application.AuthService, application.URLService)
+	userHandler := handler.NewUserHandler( application.URLService)
 	redirectHandler := handler.NewRedirectHandler(application.URLService)
 
 	mux.HandleFunc("GET /health", handler.Health)
@@ -33,7 +33,6 @@ func Register(application *app.App) *http.ServeMux {
 	userMux := http.NewServeMux()
 	userMux.HandleFunc("GET /urls", userHandler.GetUserURIs)
 
-	mux.Handle("/auth/", http.StripPrefix("/auth", authMux))
 	mux.Handle("/api/auth/", http.StripPrefix("/api/auth", authMux))
 	mux.Handle("/api/url/", http.StripPrefix("/api/url", urlMux))
 	mux.Handle("/api/user/", http.StripPrefix("/api/user", userMux))

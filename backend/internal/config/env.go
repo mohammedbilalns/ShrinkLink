@@ -41,10 +41,6 @@ func Load() Config {
 		"REDIS_URI":         cfg.RedisURI,
 	}
 
-	if cfg.BrevoAPIURL == "" {
-		cfg.BrevoAPIURL = "https://api.brevo.com/v3/smtp/email"
-	}
-
 	for key, value := range required {
 		if value == "" {
 			panic(fmt.Sprintf("%s is required", key))

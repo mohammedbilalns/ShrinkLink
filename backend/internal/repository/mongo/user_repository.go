@@ -9,7 +9,6 @@ import (
 	"github.com/mohammedbilalns/shrinklink/internal/repository"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type MongoUserRepository struct {
@@ -138,23 +137,10 @@ func (r *MongoUserRepository) UpdateVerification(
 
 func NewUserRepository(
 	db *mongo.Database,
-) (repository.UserRepository, error) {
-	repo := &MongoUserRepository{
+) repository.UserRepository {
+
+	return  &MongoUserRepository{
 		collection: db.Collection("users"),
 	}
 
-	_, err := repo.collection.Indexes().CreateOne(
-		context.Background(),
-		mongo.IndexModel{
-			Keys: bson.D{{Key: "email", Value: 1}},
-			Options: options.Index().
-				SetUnique(true).
-				SetName("uniq_users_email"),
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	return repo, nil
 }

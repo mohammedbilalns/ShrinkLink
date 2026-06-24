@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/mohammedbilalns/shrinklink/internal/apperrors"
 	"github.com/mohammedbilalns/shrinklink/internal/cache"
 	"github.com/mohammedbilalns/shrinklink/internal/model"
 	"github.com/mohammedbilalns/shrinklink/internal/repository"
@@ -13,7 +14,6 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-var errUserAlreadyExists = errors.New("user already exists")
 
 type authService struct {
 	userRepo  repository.UserRepository
@@ -93,7 +93,7 @@ func (s *authService) RegisterUser(
 
 	if user != nil {
 		if user.IsVerified {
-			return errUserAlreadyExists
+			return apperrors.ErrUserAlreadyExists
 		}
 
 		if err := s.userRepo.Delete(ctx, user.ID); err != nil {
@@ -115,7 +115,7 @@ func (s *authService) RegisterUser(
 
 	if err := s.userRepo.Create(ctx, newUser); err != nil {
 		if errors.Is(err, repository.ErrDuplicateEmail) {
-			return errUserAlreadyExists
+			return apperrors.ErrUserAlreadyExists 
 		}
 		return err
 	}
@@ -145,10 +145,10 @@ func (s *authService) ResendOTP(
 		return err
 	}
 	if user == nil {
-		return errors.New("user not found")
+		return apperrors.ErrUserNotFound 
 	}
 	if user.IsVerified {
-		return errors.New("user is already verified")
+		return apperrors.ErrUserAlreadyExists 
 	}
 
 	otp := utils.GenerateOTP(6)
@@ -208,14 +208,14 @@ func (s *authService) LoginUser(
 		return nil, err
 	}
 	if user == nil {
-		return nil, errors.New("invalid email or password")
+		return nil, apperrors.ErrInvalidEmailOrPassword 
 	}
 	if !user.IsVerified {
-		return nil, errors.New("email is not verified")
+		return nil, apperrors.ErrEmailNotVerified 
 	}
 
 	if err := utils.ComparePassword(user.Password, password); err != nil {
-		return nil, errors.New("invalid email or password")
+		return nil, apperrors.ErrInvalidEmailOrPassword 
 	}
 
 	return s.issueLoginResponse(user)
@@ -265,7 +265,7 @@ func (s *authService) CurrentUser(
 		return nil, err
 	}
 	if user == nil {
-		return nil, errors.New("user not found")
+		return nil, apperrors.ErrUserNotFound 
 	}
 
 	return user, nil

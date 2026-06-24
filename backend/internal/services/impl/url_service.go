@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"net/http"
+	"strconv"
 
 	"github.com/mohammedbilalns/shrinklink/internal/model"
 	"github.com/mohammedbilalns/shrinklink/internal/repository"
@@ -107,7 +109,7 @@ func (s *urlService) CreateShortURL(
 		}
 	}
 
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		slug := utils.GenerateSlug(8)
 		shortURL, err := s.createShortURLRecord(ctx, normalizedURL, slug, owner)
 		if err == nil {
@@ -146,12 +148,6 @@ func (s *urlService) GetUserURLs(
 	page int64,
 	limit int64,
 ) ([]model.ShortURL, int64, error) {
-	if page < 1 {
-		page = 1
-	}
-	if limit < 1 {
-		limit = 10
-	}
 
 	skip := (page - 1) * limit
 	urls, totalCount, err := s.shortURLRepo.FindByUser(ctx, userID, skip, limit)
@@ -175,4 +171,48 @@ func (s *urlService) ResolveShortURL(
 	}
 
 	return shortURL, nil
+}
+
+
+
+const (
+	DefaultPage  int64 = 1
+	DefaultLimit int64 = 10
+	MaxLimit     int64 = 100
+)
+
+type Pagination struct {
+	Page  int64
+	Limit int64
+}
+
+func ParsePagination(r *http.Request) Pagination {
+	page, _ := strconv.ParseInt(
+		r.URL.Query().Get("page"),
+		10,
+		64,
+	)
+
+	limit, _ := strconv.ParseInt(
+		r.URL.Query().Get("limit"),
+		10,
+		64,
+	)
+
+	if page < 1 {
+		page = DefaultPage
+	}
+
+	if limit < 1 {
+		limit = DefaultLimit
+	}
+
+	if limit > MaxLimit {
+		limit = MaxLimit
+	}
+
+	return Pagination{
+		Page:  page,
+		Limit: limit,
+	}
 }
