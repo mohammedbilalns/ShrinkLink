@@ -2,6 +2,7 @@ package router
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/mohammedbilalns/shrinklink/internal/app"
 	"github.com/mohammedbilalns/shrinklink/internal/handler"
@@ -36,9 +37,15 @@ func Register(application *app.App) *http.ServeMux {
 
 	authMiddleware := middleware.Auth(application.AuthService)
 
-	mux.Handle("/auth/", http.StripPrefix("/auth", authMux))
+	mux.Handle("/auth/", middleware.RateLimit(10, time.Minute)(
+		http.StripPrefix("/auth", authMux),
+		))
 	mux.Handle("/api/url/", http.StripPrefix("/api/url", urlMux))
-	mux.Handle("/api/user/", http.StripPrefix("/api/user", authMiddleware(userMux)))
+	mux.Handle("/api/user/", http.StripPrefix("/api/user", middleware.Timeout(10*time.Second)(
+		authMiddleware(
+			http.StripPrefix("/api/user", userMux),
+			),
+		))) 
 	mux.HandleFunc("GET /{id}", redirectHandler.RedirectURI)
 
 	return mux
