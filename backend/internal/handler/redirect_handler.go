@@ -35,7 +35,7 @@ type createURLRequest struct {
 }
 
 func (h *URLHandler) currentUserID(r *http.Request, required bool) (*bson.ObjectID, error) {
-	token :=httpx.CookieValue(r, "accessToken")
+	token := httpx.CookieValue(r, "accessToken")
 	if token == "" {
 		if required {
 			return nil, http.ErrNoCookie
