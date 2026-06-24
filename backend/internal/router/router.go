@@ -43,7 +43,7 @@ func Register(application *app.App) *http.ServeMux {
 	mux.Handle("/api/url/", http.StripPrefix("/api/url", urlMux))
 	mux.Handle("/api/user/", http.StripPrefix("/api/user", middleware.Timeout(10*time.Second)(
 		authMiddleware(
-			http.StripPrefix("/api/user", userMux),
+		 userMux,
 			),
 		))) 
 	mux.HandleFunc("GET /{id}", redirectHandler.RedirectURI)
