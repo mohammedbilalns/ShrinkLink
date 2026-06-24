@@ -2,9 +2,11 @@ package router
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/mohammedbilalns/shrinklink/internal/app"
 	"github.com/mohammedbilalns/shrinklink/internal/handler"
+	"github.com/mohammedbilalns/shrinklink/internal/middleware"
 )
 
 func Register(application *app.App) *http.ServeMux {
@@ -12,7 +14,7 @@ func Register(application *app.App) *http.ServeMux {
 	mux := http.NewServeMux()
 	authHandler := handler.NewAuthHandler(application.AuthService, application.Config)
 	urlHandler := handler.NewURLHandler(application.URLService, application.AuthService)
-	userHandler := handler.NewUserHandler( application.URLService)
+	userHandler := handler.NewUserHandler(application.URLService)
 	redirectHandler := handler.NewRedirectHandler(application.URLService)
 
 	mux.HandleFunc("GET /health", handler.Health)
@@ -33,9 +35,17 @@ func Register(application *app.App) *http.ServeMux {
 	userMux := http.NewServeMux()
 	userMux.HandleFunc("GET /urls", userHandler.GetUserURIs)
 
-	mux.Handle("/auth/", http.StripPrefix("/auth", authMux))
+	authMiddleware := middleware.Auth(application.AuthService)
+
+	mux.Handle("/auth/", middleware.RateLimit(10, time.Minute)(
+		http.StripPrefix("/auth", authMux),
+		))
 	mux.Handle("/api/url/", http.StripPrefix("/api/url", urlMux))
-	mux.Handle("/api/user/", http.StripPrefix("/api/user", userMux))
+	mux.Handle("/api/user/", http.StripPrefix("/api/user", middleware.Timeout(10*time.Second)(
+		authMiddleware(
+			http.StripPrefix("/api/user", userMux),
+			),
+		))) 
 	mux.HandleFunc("GET /{id}", redirectHandler.RedirectURI)
 
 	return mux

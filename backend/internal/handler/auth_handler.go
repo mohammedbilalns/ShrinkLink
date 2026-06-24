@@ -43,13 +43,17 @@ func (h *AuthHandler) setAuthCookies(w http.ResponseWriter, accessToken, refresh
 }
 
 func (h *AuthHandler) clearAuthCookies(w http.ResponseWriter) {
+	sameSite := http.SameSiteLaxMode
+	if h.secure {
+		sameSite = http.SameSiteNoneMode
+	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     "accessToken",
 		Value:    "",
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   h.secure,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: sameSite,
 		MaxAge:   -1,
 	})
 	http.SetCookie(w, &http.Cookie{
@@ -58,7 +62,7 @@ func (h *AuthHandler) clearAuthCookies(w http.ResponseWriter) {
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   h.secure,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: sameSite,
 		MaxAge:   -1,
 	})
 }
