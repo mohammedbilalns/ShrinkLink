@@ -73,7 +73,7 @@ function UrlsList() {
             href={baseUrl + url.shortUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 underline text-sm break-all"
+            className="text-emerald-600 underline text-sm break-all"
           >
             {baseUrl + url.shortUrl}
           </a>
@@ -127,7 +127,7 @@ function UrlsList() {
                     </p>
                     <button
                       onClick={handleRetry}
-                      className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                      className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition"
                     >
                       Try Again
                     </button>
@@ -145,7 +145,7 @@ function UrlsList() {
                       <a
                         href={baseUrl + url.shortUrl}
 												onClick={(event)=>handleUrlClick(url.shortUrl,event)}
-                        className="text-blue-600 underline break-all"
+                        className="text-emerald-600 underline break-all"
                       >
                         {baseUrl + url.shortUrl}
                       </a>
@@ -217,7 +217,7 @@ function UrlsList() {
               </p>
               <button
                 onClick={handleRetry}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition"
               >
                 Try Again
               </button>

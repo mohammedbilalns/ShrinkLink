@@ -87,7 +87,7 @@ function UrlForm() {
           type="url"
           placeholder="https://example.com/very-long-url-that-needs-shortening"
           required
-          className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none w-full"
+          className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 outline-none w-full"
           onChange={handleUrlChange}
           value={url}
           disabled={createUrlMutation.isLoading}
@@ -105,7 +105,7 @@ function UrlForm() {
               id="slug"
               type="text"
               placeholder="your-custom-slug"
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 outline-none w-full"
+              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-teal-500 outline-none w-full"
               onChange={(event) => setSlug(event.target.value)}
               value={slug}
               disabled={createUrlMutation.isLoading}
@@ -122,7 +122,7 @@ function UrlForm() {
           <button
             type="submit"
             disabled={createUrlMutation.isLoading || hasGeneratedLink}
-            className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition flex-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition flex-1 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {createUrlMutation.isLoading
               ? "Creating..."
@@ -149,7 +149,7 @@ function UrlForm() {
             <a
               href={shortUrl}
 							onClick={handleUrlClick} 
-              className="text-blue-600 underline break-all ml-1"
+              className="text-emerald-600 underline break-all ml-1"
             >
               {shortUrl}
             </a>
