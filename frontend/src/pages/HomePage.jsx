@@ -76,11 +76,11 @@ export default function HomePage() {
   ];
 
   return (
-    <main className="min-h-[calc(100vh-5rem)] flex flex-col bg-gradient-to-br from-[#f3f4ff] to-[#e0f7fa] text-gray-800">
+    <main className="min-h-[calc(100vh-5rem)] flex flex-col bg-gradient-to-br from-emerald-50 to-teal-50 text-gray-800">
       {/* Hero Section */}
       <section className="flex-grow flex flex-col items-center justify-center px-4 py-12 md:py-20">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-6">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600 mb-6">
             ShrinkLink
           </h1>
           <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto">
@@ -103,12 +103,12 @@ export default function HomePage() {
                 key={index}
                 className={`p-6 rounded-xl transition-all duration-300 cursor-pointer ${
                   activeFeature === index
-                    ? "bg-gradient-to-r from-blue-50 to-purple-50 shadow-lg transform -translate-y-2"
+                    ? "bg-gradient-to-r from-emerald-50 to-teal-50 shadow-lg transform -translate-y-2"
                     : "bg-white shadow-md hover:shadow-lg"
                 }`}
                 onMouseEnter={() => setActiveFeature(index)}
               >
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg flex items-center justify-center text-white mb-4">
                   {feature.icon}
                 </div>
                 <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
@@ -120,7 +120,7 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="px-4 py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="px-4 py-16 bg-gradient-to-r from-emerald-600 to-teal-600 text-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {stats.map((stat, index) => (
@@ -128,7 +128,7 @@ export default function HomePage() {
                 <div className="text-3xl md:text-4xl font-bold mb-2">
                   {stat.value}
                 </div>
-                <div className="text-blue-100">{stat.label}</div>
+                <div className="text-emerald-100">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -146,13 +146,13 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/auth"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition text-center"
+              className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition text-center"
             >
               Sign Up Now
             </Link>
             <Link
               href="/auth"
-              className="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition text-center"
+              className="border-2 border-emerald-600 text-emerald-600 px-8 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition text-center"
             >
               Login
             </Link>

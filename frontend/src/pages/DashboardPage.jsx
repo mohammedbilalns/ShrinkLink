@@ -4,10 +4,10 @@ import { Suspense } from "react";
 
 export default function Dashboard() {
   return (
-    <div className="min-h-[calc(100vh-5rem)] flex flex-col bg-gradient-to-br from-[#f3f4ff] to-[#e0f7fa] text-gray-800">
+    <div className="min-h-[calc(100vh-5rem)] flex flex-col bg-gradient-to-br from-emerald-50 to-teal-50 text-gray-800">
       {/* Header */}
       <div className="py-6 text-center">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600">
           ShrinkLink
         </h1>
         <p className="text-gray-600 mt-2">Create and manage your short URLs</p>

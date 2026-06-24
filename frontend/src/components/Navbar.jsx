@@ -40,7 +40,7 @@ function Navbar() {
       <div className="container mx-auto flex justify-between items-center">
         <Link
           to="/"
-          className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"
+          className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-600"
           aria-label="ShrinkLink Home"
         >
           ShrinkLink
@@ -66,7 +66,7 @@ function Navbar() {
           ) : (
             <Link
               to="/auth"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out"
+              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out"
               aria-label="Login"
             >
               Login
